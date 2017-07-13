@@ -9,7 +9,16 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class CustomersService(implicit executionContext: ExecutionContext) extends CustomerValidator with RestJsonFormats {
 
-  def getCustomerById(id: String): Future[Option[Customer]] = ???
+  def getCustomerById(id: String): Future[Response] = {
+    validateCustomerId(id).flatMap( _.fold(
+        left => Future(Response(ResponseStatusCodes.validationError, left)),
+        right => CustomerStorage.findByCustomerId(id) ).map( _ match {
+          case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson.prettyPrint )
+          case None => Response( ResponseStatusCodes.dbError, "" )
+        }
+      )
+    )
+  }
 
   def createCustomer(id: String, newCustomer: NewCustomer): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(

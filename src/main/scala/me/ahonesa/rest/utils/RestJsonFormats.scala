@@ -16,7 +16,6 @@ trait RestJsonFormats extends DefaultJsonProtocol with SprayJsonSupport {
     override def write(uuid: UUID): JsValue = JsString(uuid.toString)
   }
 
-
   implicit val userEntityUpdateFormat = jsonFormat1(NewCustomer.apply)
   implicit val userEntityFormat = jsonFormat2(Customer.apply)
 }

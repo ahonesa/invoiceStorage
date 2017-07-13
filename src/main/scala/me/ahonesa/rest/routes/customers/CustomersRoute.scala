@@ -1,5 +1,6 @@
 package me.ahonesa.rest.routes.customers
 
+import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.PathMatchers.IntNumber
@@ -23,15 +24,23 @@ class CustomersRoute(customersService: CustomersService)(implicit executionConte
   val route = pathPrefix(customersPath) {
       pathPrefix(Segment) { segm =>
         get {
-          complete(customersService.getCustomerById(segm))
+          complete{
+            customersService.getCustomerById(segm).map[ToResponseMarshallable] {
+              case result => result.statusCode -> result.payload
+            }
+          }
         } ~
         put {
           entity(as[NewCustomer]) { newCustomer =>
-            complete(customersService.createCustomer(segm, newCustomer))
+            complete {
+              customersService.createCustomer(segm, newCustomer).map[ToResponseMarshallable] {
+                case result => result.statusCode -> result.payload
+              }
+            }
           }
         }
       }
-  }
+  } ~ getHello
 
   @ApiOperation(value = "Return Hello greeting", notes = "", nickname = "anonymousHello", httpMethod = "GET")
   @ApiResponses(Array(
@@ -41,7 +50,7 @@ class CustomersRoute(customersService: CustomersService)(implicit executionConte
   def getHello =
     path("hello") {
       get {
-        complete { "Hello, there" }
+        complete { 200 -> "Hello, there" }
       }
     }
 }

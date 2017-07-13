@@ -12,14 +12,13 @@ import scala.concurrent.ExecutionContext
 
 @Path("/customers")
 @Api(value = "/customers", produces = "application/json")
-class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends CommonJsonFormats {
+case class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends CommonJsonFormats {
 
   val customersPath = "customers"
 
   val route = pathPrefix(customersPath) {
     pathPrefix(Segment) { segm =>
-      getCustomer(segm) ~ putCustomer(segm)
-    } ~ getHealth
+      getCustomer(segm) ~ putCustomer(segm) }
   }
 
   @Path("/{customerId}")

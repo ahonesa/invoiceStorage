@@ -5,7 +5,7 @@ import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import me.ahonesa.core.models.{Customer, NewCustomer}
 import spray.json.{DefaultJsonProtocol, JsString, JsValue, JsonFormat, deserializationError}
 
-trait RestJsonFormats extends DefaultJsonProtocol with SprayJsonSupport {
+trait CommonJsonFormats extends DefaultJsonProtocol with SprayJsonSupport {
 
   implicit object uuidFormat extends JsonFormat[UUID] {
     override def read(json: JsValue): UUID = json match {

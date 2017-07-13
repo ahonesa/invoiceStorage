@@ -15,6 +15,7 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-spray-json" % akka,
     "com.outworkers"  %% "phantom-dsl" % phantom,
     "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1",
+    "io.swagger" % "swagger-jaxrs" % "1.5.15",
     "org.slf4j" % "slf4j-nop" % "1.6.4",
     "org.scalatest" %% "scalatest" % scalaTest % "test",
     "com.typesafe.akka" %% "akka-http-testkit" % akka % "test"

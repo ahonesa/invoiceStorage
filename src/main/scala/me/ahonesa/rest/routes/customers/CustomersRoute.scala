@@ -1,56 +1,68 @@
 package me.ahonesa.rest.routes.customers
 
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
-import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
-import akka.http.scaladsl.server.PathMatchers.IntNumber
-import me.ahonesa.core.models.{NewCustomer, Response}
+import me.ahonesa.core.models.{Customer, NewCustomer}
 import me.ahonesa.rest.services.CustomersService
-import me.ahonesa.rest.utils.RestJsonFormats
-import spray.json._
+import me.ahonesa.rest.utils.CommonJsonFormats
 import io.swagger.annotations._
+import javax.ws.rs.Path
 
 import scala.concurrent.ExecutionContext
-import scala.concurrent.Future
-import scala.util.{Failure, Success}
 
-@Api(value = "/customers", description = "Hello Template.", produces = "application/json")
-class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends RestJsonFormats {
-
-  import StatusCodes._
+@Path("/customers")
+@Api(value = "/customers", produces = "application/json")
+class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends CommonJsonFormats {
 
   val customersPath = "customers"
 
   val route = pathPrefix(customersPath) {
-      pathPrefix(Segment) { segm =>
-        get {
-          complete{
-            customersService.getCustomerById(segm).map[ToResponseMarshallable] {
-              case result => result.statusCode -> result.payload
-            }
-          }
-        } ~
-        put {
-          entity(as[NewCustomer]) { newCustomer =>
-            complete {
-              customersService.createCustomer(segm, newCustomer).map[ToResponseMarshallable] {
-                case result => result.statusCode -> result.payload
-              }
-            }
+    pathPrefix(Segment) { segm =>
+      getCustomer(segm) ~ putCustomer(segm)
+    } ~ getHealth
+  }
+
+  @Path("/{customerId}")
+  @ApiOperation(httpMethod = "GET", value = "get customer")
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Return customer", response = classOf[Customer]),
+    new ApiResponse(code = 500, message = "Internal server error")
+  ))
+  def getCustomer(segm: String) =
+      get {
+        complete {
+          customersService.getCustomerById(segm).map[ToResponseMarshallable] {
+            case result => result.statusCode -> result.payload
           }
         }
       }
-  } ~ getHello
 
-  @ApiOperation(value = "Return Hello greeting", notes = "", nickname = "anonymousHello", httpMethod = "GET")
+  @ApiOperation(httpMethod = "PUT", value = "create customer")
+  @ApiResponses(Array(
+    new ApiResponse(code = 200, message = "Return customer", response = classOf[Customer]),
+    new ApiResponse(code = 500, message = "Internal server error")
+  ))
+  def putCustomer(segm: String) =
+    put {
+      entity(as[NewCustomer]) { newCustomer =>
+        complete {
+          customersService.createCustomer(segm, newCustomer).map[ToResponseMarshallable] {
+            case result => result.statusCode -> result.payload
+          }
+        }
+      }
+    }
+
+  @Path("/health")
+  @ApiOperation(httpMethod = "GET", value = "Return Hello World")
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Return Hello Greeting"),
     new ApiResponse(code = 500, message = "Internal server error")
   ))
-  def getHello =
-    path("hello") {
+  def getHealth =
+    path("health") {
       get {
-        complete { 200 -> "Hello, there" }
+        complete { 200 -> "Hello, world" }
       }
     }
 }

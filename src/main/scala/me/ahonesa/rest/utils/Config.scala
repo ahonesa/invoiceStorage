@@ -12,7 +12,7 @@ trait Config {
   val httpPort = httpConfig.getInt("port")
 
   val hosts = config.getStringList("cassandra.host").asScala.toSeq
-  val keyspace = config.getString("cassandra.keyspace")
+  val keyspaceName = config.getString("cassandra.keyspace")
   val username = config.getString("cassandra.username")
   val password = config.getString("cassandra.password")
 

@@ -11,7 +11,7 @@ import me.ahonesa.storage.StorageConnector
 
 import scala.concurrent.ExecutionContext
 
-object Main extends App with StorageConnector with Config {
+object Main extends App with Config {
 
   implicit val actorSystem = ActorSystem()
   implicit val executor: ExecutionContext = actorSystem.dispatcher

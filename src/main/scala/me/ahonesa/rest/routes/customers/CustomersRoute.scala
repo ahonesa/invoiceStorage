@@ -3,13 +3,15 @@ package me.ahonesa.rest.routes.customers
 import akka.http.scaladsl.model.StatusCodes
 import akka.http.scaladsl.server.Directives._
 import akka.http.scaladsl.server.PathMatchers.IntNumber
-import me.ahonesa.core.models.NewCustomer
+import me.ahonesa.core.models.{NewCustomer, Response}
 import me.ahonesa.rest.services.CustomersService
 import me.ahonesa.rest.utils.RestJsonFormats
 import spray.json._
 import io.swagger.annotations._
 
 import scala.concurrent.ExecutionContext
+import scala.concurrent.Future
+import scala.util.{Failure, Success}
 
 @Api(value = "/customers", description = "Hello Template.", produces = "application/json")
 class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends RestJsonFormats {
@@ -28,7 +30,7 @@ class CustomersRoute(customersService: CustomersService)(implicit executionConte
             complete(customersService.createCustomer(segm, newCustomer))
           }
         }
-      } ~ getHello
+      }
   }
 
   @ApiOperation(value = "Return Hello greeting", notes = "", nickname = "anonymousHello", httpMethod = "GET")

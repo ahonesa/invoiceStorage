@@ -1,15 +1,39 @@
 package me.ahonesa.rest.services
 
 import me.ahonesa.storage.db.CustomerStorage
-import me.ahonesa.core.models.{Customer, NewCustomer}
+import me.ahonesa.core.models.{Customer, NewCustomer, Response, ResponseStatusCodes}
+import me.ahonesa.rest.utils.RestJsonFormats
+import spray.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-class CustomersService(implicit executionContext: ExecutionContext) {
+case class CustomersService(implicit executionContext: ExecutionContext) extends CustomerValidator with RestJsonFormats {
 
   def getCustomerById(id: String): Future[Option[Customer]] = ???
 
-  def createCustomer(id: String, newCustomer: NewCustomer): Future[Option[Customer]] = ???
+  def createCustomer(id: String, newCustomer: NewCustomer): Future[Response] = {
+    validateCustomerId(id).flatMap( _.fold(
+        left => Future(Response(ResponseStatusCodes.validationError, left)),
+        right => CustomerStorage.createCustomer(id, newCustomer) ).map( _ match {
+          case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson.prettyPrint )
+          case None => Response( ResponseStatusCodes.dbError, "" )
+        }
+      )
+    )
+  }
+}
 
 
+trait CustomerValidator extends CommonValidator {
+
+  def validateCustomerId(id: String)(implicit executionContext: ExecutionContext): Future[Either[String, String]] = {
+    containsNoSpecialChars(id) match {
+      case true => CustomerStorage.findByCustomerId(id).map ( _ match {
+          case Some(result) => Left("customerId already exists")
+          case None => Right("ok")
+        }
+      )
+      case false => Future(Left("customerId validation error"))
+    }
+  }
 }

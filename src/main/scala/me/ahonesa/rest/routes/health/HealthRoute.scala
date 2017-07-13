@@ -11,8 +11,8 @@ import me.ahonesa.rest.utils.CommonJsonFormats
 
 import scala.concurrent.ExecutionContext
 
-@Path("/")
-@Api(value = "/healh", produces = "application/json")
+@Path("/health")
+@Api(value = "/health", produces = "application/json")
 case class HealthRoute(implicit executionContext: ExecutionContext) extends CommonJsonFormats {
 
   val healthPath = "health"
@@ -21,7 +21,6 @@ case class HealthRoute(implicit executionContext: ExecutionContext) extends Comm
     getHealth
   }
 
-  @Path("/health")
   @ApiOperation(httpMethod = "GET", value = "Return Hello World")
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Return Hello Greeting"),

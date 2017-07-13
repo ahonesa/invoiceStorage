@@ -11,7 +11,7 @@ import javax.ws.rs.Path
 import scala.concurrent.ExecutionContext
 
 @Path("/customers")
-@Api(value = "/customers", produces = "application/json")
+@Api(value = "/customers")
 case class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends CommonJsonFormats {
 
   val customersPath = "customers"

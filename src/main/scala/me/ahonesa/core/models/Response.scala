@@ -1,6 +1,8 @@
 package me.ahonesa.core.models
 
-case class Response(statusCode: Int, payload: String )
+import spray.json.JsValue
+
+case class Response(statusCode: Int, payload: JsValue )
 
 object ResponseStatusCodes {
   val validationError = 422

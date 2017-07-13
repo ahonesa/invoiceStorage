@@ -11,20 +11,20 @@ case class CustomersService(implicit executionContext: ExecutionContext) extends
 
   def getCustomerById(id: String): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
-        left => Future(Response(ResponseStatusCodes.validationError, left)),
+        left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
         right => CustomerStorage.findByCustomerId(id) ).map {
-          case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson.prettyPrint )
-          case None => Response( ResponseStatusCodes.dbError, "" )
+          case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson )
+          case None => Response( ResponseStatusCodes.dbError, JsNull )
         }
     )
   }
 
   def createCustomer(id: String, newCustomer: NewCustomer): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
-        left => Future(Response(ResponseStatusCodes.validationError, left)),
+        left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
         right => CustomerStorage.createCustomer(id, newCustomer) ).map {
-          case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson.prettyPrint )
-          case None => Response( ResponseStatusCodes.dbError, "" )
+          case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson )
+          case None => Response( ResponseStatusCodes.dbError, JsNull )
         }
 
     )

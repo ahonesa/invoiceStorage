@@ -2,12 +2,11 @@ package me.ahonesa.rest.routes.health
 
 import javax.ws.rs.Path
 
-import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.server.Directives._
 import io.swagger.annotations._
-import me.ahonesa.core.models.{Customer, NewCustomer}
-import me.ahonesa.rest.services.CustomersService
 import me.ahonesa.rest.utils.CommonJsonFormats
+import spray.json._
+import spray.json.DefaultJsonProtocol._
 
 import scala.concurrent.ExecutionContext
 
@@ -28,7 +27,7 @@ case class HealthRoute(implicit executionContext: ExecutionContext) extends Comm
   ))
   def getHealth =
       get {
-        complete { 200 -> "Hello, world" }
+        complete { 200 -> "Hello, world".toJson }
       }
 
 }

@@ -12,6 +12,7 @@ abstract class CustomerTable extends Table[CustomerTable, Customer] {
   override def tableName: String = "customers"
 
   object customer_id extends StringColumn with PartitionKey
+
   object name extends StringColumn
 
   def findByCustomerId(id: String): Future[Option[Customer]] = {

@@ -11,23 +11,35 @@ import me.ahonesa.storage.db.CustomerTable
 
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
+import scala.concurrent.duration._
+import com.outworkers.phantom.dsl._
+
+import scala.util.{Failure, Success, Try}
 
 object StorageConnector extends Config {
   lazy val connector: CassandraConnection = ContactPoints(hosts)
       .withClusterBuilder(_.withCredentials(username, password))
       .keySpace(keyspaceName)
-}
 
+  implicit val session = Try(connector.session) match {
+    case Success(session) =>
+      println("Connected to Cassandra")
+      session
+    case Failure(ex) => {
+      println("Couldn't connect to Cassandra", ex)
+      sys.exit(1)
+    }
+  }
+}
 
 class InvoiceStorage(override val connector: CassandraConnection)(executionContext: ExecutionContext)
   extends Database[InvoiceStorage](connector) with Config {
 
-  implicit val keySpace = KeySpace(keyspaceName)
-  implicit val executor = executionContext.
-
   object CustomerTable extends CustomerTable with connector.Connector
 
-  def createTable = CustomerTable.create.ifNotExists().future()
+  implicit val keySpace = KeySpace(keyspaceName)
+
+  val createFuture = Await.ready(CustomerTable.create.ifNotExists().future(), 3.seconds)
 
   def findByCustomerId(id: String): Future[Option[Customer]] = {
     CustomerTable.findByCustomerId(id)
@@ -42,4 +54,3 @@ class InvoiceStorage(override val connector: CassandraConnection)(executionConte
 }
 
 
-object Database extends InvoiceStorage(StorageConnector.connector)(Main.executor)

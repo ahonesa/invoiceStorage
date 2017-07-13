@@ -8,11 +8,14 @@ import me.ahonesa.rest.utils.CommonJsonFormats
 import io.swagger.annotations._
 import javax.ws.rs.Path
 
+import akka.http.scaladsl.server.Directives
+
+import scala.annotation.meta.field
 import scala.concurrent.ExecutionContext
 
 @Path("/customers")
 @Api(value = "/customers")
-case class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends CommonJsonFormats {
+case class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
 
   val customersPath = "customers"
 
@@ -36,9 +39,16 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
         }
       }
 
+  @Path("/{customerId}")
   @ApiOperation(httpMethod = "PUT", value = "create customer")
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "customerId", required = true, dataType = "string", paramType = "path",
+      value = "Id of customer to be created"),
+    new ApiImplicitParam(name = "body", value = "Customer object to be created",
+      dataType = "me.ahonesa.rest.routes.customers.NewCustomerSwaggerModel", required = true, paramType = "body")
+  ))
   @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "Return customer", response = classOf[Customer]),
+    new ApiResponse(code = 200, message = "Return customer"),
     new ApiResponse(code = 500, message = "Internal server error")
   ))
   def putCustomer(segm: String) =
@@ -52,3 +62,5 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
       }
     }
 }
+
+case class NewCustomerSwaggerModel(@(ApiModelProperty @field)(required = false) name: Option[String] = None)

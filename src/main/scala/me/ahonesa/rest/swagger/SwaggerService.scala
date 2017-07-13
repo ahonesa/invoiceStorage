@@ -18,5 +18,5 @@ case class SwaggerService(system: ActorSystem) extends SwaggerHttpService with H
   override val basePath = "/"
   override val apiDocsPath = "api-docs"
   override val info = Info(version = "0.1")
-  override val securitySchemeDefinitions = Map("basicAuth" -> new BasicAuthDefinition())
+  // override val securitySchemeDefinitions = Map("basicAuth" -> new BasicAuthDefinition())
 }

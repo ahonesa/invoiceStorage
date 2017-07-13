@@ -18,7 +18,7 @@ object Main extends App with Config {
   implicit val log: LoggingAdapter = Logging(actorSystem, getClass)
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  implicit val invoiceStorage = new InvoiceStorage(StorageConnector.connector)
+  implicit val invoiceStorage = new InvoiceStorage(StorageConnector.connector)(executor)
 
   val usersService = new CustomersService()
 

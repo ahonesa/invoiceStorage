@@ -20,18 +20,20 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
   val customersPath = "customers"
 
   val route = pathPrefix(customersPath) {
-    pathPrefix(Segment) { segm =>
-      getCustomer(segm) ~ putCustomer(segm) }
+      get { getCustomer } ~ put { putCustomer }
   }
 
   @Path("/{customerId}")
-  @ApiOperation(httpMethod = "GET", value = "get customer")
+  @ApiOperation(httpMethod = "GET", value = "get customer", produces = "text/plain")
+  @ApiImplicitParams(Array(
+    new ApiImplicitParam(name = "customerId", required = true, dataType = "string", paramType = "path", value = "Id of customer to be fetched")
+  ))
   @ApiResponses(Array(
     new ApiResponse(code = 200, message = "Return customer", response = classOf[Customer]),
     new ApiResponse(code = 500, message = "Internal server error")
   ))
-  def getCustomer(segm: String) =
-      get {
+  def getCustomer =
+      pathPrefix(Segment) { segm =>
         complete {
           customersService.getCustomerById(segm).map[ToResponseMarshallable] {
             case result => result.statusCode -> result.payload
@@ -40,7 +42,7 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
       }
 
   @Path("/{customerId}")
-  @ApiOperation(httpMethod = "PUT", value = "create customer")
+  @ApiOperation(httpMethod = "PUT", value = "create customer", consumes = "application/json")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "customerId", required = true, dataType = "string", paramType = "path",
       value = "Id of customer to be created"),
@@ -51,8 +53,8 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
     new ApiResponse(code = 200, message = "Return customer"),
     new ApiResponse(code = 500, message = "Internal server error")
   ))
-  def putCustomer(segm: String) =
-    put {
+  def putCustomer =
+    pathPrefix(Segment) { segm =>
       entity(as[NewCustomer]) { newCustomer =>
         complete {
           customersService.createCustomer(segm, newCustomer).map[ToResponseMarshallable] {
@@ -63,4 +65,10 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
     }
 }
 
-case class NewCustomerSwaggerModel(@(ApiModelProperty @field)(required = false) name: Option[String] = None)
+@ApiModel(description = "A Customer object")
+case class NewCustomerSwaggerModel(
+ @(ApiModelProperty @field)(value = "name of the customer", required = false)
+ name: Option[String] = None,
+ @(ApiModelProperty @field)(value = "email of the customer", required = false)
+ email: Option[String] = None
+)

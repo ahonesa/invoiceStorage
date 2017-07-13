@@ -44,4 +44,7 @@ trait CustomerValidator extends CommonValidator {
       case false => Future(Left("customerId validation error"))
     }
   }
+
+
+  // TODO: add validations for all customer properties
 }

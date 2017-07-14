@@ -23,7 +23,6 @@ case class Invoice(
 
 case class InvoiceSummary(
   invoiceNumber: String,
-  invoiceStatus: InvoiceStatus,
   toBePaid: BigDecimal,
   alreadyPaid: BigDecimal
 )

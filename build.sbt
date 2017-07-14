@@ -8,6 +8,7 @@ libraryDependencies ++= {
   val akka = "10.0.9"
   val phantom = "2.12.1"
   val scalaTest = "3.0.1"
+  val slf4j = "1.7.25"
 
   Seq(
     "com.typesafe.akka" %% "akka-http-core" % akka,
@@ -15,7 +16,8 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-spray-json" % akka,
     "com.outworkers"  %% "phantom-dsl" % phantom,
     "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1",
-    "org.slf4j" % "slf4j-nop" % "1.6.4",
+    "org.slf4j" % "slf4j-api" % slf4j,
+    "org.slf4j" % "slf4j-simple" % slf4j,
     "org.scalatest" %% "scalatest" % scalaTest % "test",
     "com.typesafe.akka" %% "akka-http-testkit" % akka % "test"
   )

@@ -6,8 +6,8 @@ import com.outworkers.phantom.connectors.{CassandraConnection, ContactPoints, Ke
 import com.outworkers.phantom.database.Database
 import me.ahonesa.Main
 import me.ahonesa.core.models.{Customer, NewCustomer}
-import me.ahonesa.rest.utils.Config
-import me.ahonesa.storage.db.CustomerTable
+import me.ahonesa.rest.utils.{Config, Logging}
+import me.ahonesa.storage.db.{CustomerTable, InvoicesTable}
 
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
@@ -17,30 +17,41 @@ import me.ahonesa.core.models.identifiers.CustomerId
 
 import scala.util.{Failure, Success, Try}
 
-object StorageConnector extends Config {
+object StorageConnector extends Config with Logging {
   lazy val connector: CassandraConnection = ContactPoints(hosts)
       .withClusterBuilder(_.withCredentials(username, password))
       .keySpace(keyspaceName)
 
   implicit val session = Try(connector.session) match {
     case Success(session) =>
-      println("Connected to Cassandra")
+      logger.info("Connected to Cassandra")
       session
     case Failure(ex) => {
-      println("Couldn't connect to Cassandra", ex)
+      logger.error("Couldn't connect to Cassandra", ex)
       sys.exit(1)
     }
   }
 }
 
 class InvoiceStorage(override val connector: CassandraConnection)(executionContext: ExecutionContext)
-  extends Database[InvoiceStorage](connector) with Config {
+
+  extends Database[InvoiceStorage](connector) with Config with Logging {
 
   object CustomerTable extends CustomerTable with connector.Connector
+  object InvoicesTable extends InvoicesTable with connector.Connector
 
   implicit val keySpace = KeySpace(keyspaceName)
 
-  val createFuture = Await.ready(CustomerTable.create.ifNotExists().future(), 3.seconds)
+  Try{
+    Await.ready(CustomerTable.create.ifNotExists().future(), 10.seconds)
+    Await.ready(InvoicesTable.create.ifNotExists().future(), 10.seconds)
+  } match {
+    case Success(_) => Unit
+    case Failure(ex) => {
+      logger.error("Exception occurred when creating Cassandra tables", ex)
+      sys.exit(1)
+    }
+  }
 
   def findByCustomerId(id: CustomerId): Future[Option[Customer]] = {
     CustomerTable.findByCustomerId(id)

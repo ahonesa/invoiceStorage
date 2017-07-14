@@ -13,6 +13,7 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
 import scala.concurrent.duration._
 import com.outworkers.phantom.dsl._
+import me.ahonesa.core.models.identifiers.CustomerId
 
 import scala.util.{Failure, Success, Try}
 
@@ -41,11 +42,11 @@ class InvoiceStorage(override val connector: CassandraConnection)(executionConte
 
   val createFuture = Await.ready(CustomerTable.create.ifNotExists().future(), 3.seconds)
 
-  def findByCustomerId(id: String): Future[Option[Customer]] = {
+  def findByCustomerId(id: CustomerId): Future[Option[Customer]] = {
     CustomerTable.findByCustomerId(id)
   }
 
-  def createCustomer(id: String, newCustomer: NewCustomer): Future[Option[Customer]] = {
+  def createCustomer(id: CustomerId, newCustomer: NewCustomer): Future[Option[Customer]] = {
     val customer = Customer(id, newCustomer.name.getOrElse(""))
     CustomerTable.createCustomer(customer.id, customer.name).map( resultSet =>
       if(resultSet.wasApplied()) Some(customer) else None

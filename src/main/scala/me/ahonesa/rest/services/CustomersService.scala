@@ -1,5 +1,6 @@
 package me.ahonesa.rest.services
 
+import me.ahonesa.core.models.identifiers.CustomerId
 import me.ahonesa.core.models.{Customer, NewCustomer, Response, ResponseStatusCodes}
 import me.ahonesa.rest.utils.CommonJsonFormats
 import me.ahonesa.storage.InvoiceStorage
@@ -9,7 +10,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 case class CustomersService(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage) extends CustomerValidator with CommonJsonFormats {
 
-  def getCustomerById(id: String): Future[Response] = {
+  def getCustomerById(id: CustomerId): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
         left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
         right => invoiceStorage.findByCustomerId(id) ).map {
@@ -19,7 +20,7 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
     )
   }
 
-  def createCustomer(id: String, newCustomer: NewCustomer): Future[Response] = {
+  def createCustomer(id: CustomerId, newCustomer: NewCustomer): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
         left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
         right => invoiceStorage.createCustomer(id, newCustomer) ).map {
@@ -34,7 +35,7 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
 
 trait CustomerValidator extends CommonValidator {
 
-  def validateCustomerId(id: String)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage): Future[Either[String, String]] = {
+  def validateCustomerId(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage): Future[Either[String, String]] = {
     containsNoSpecialChars(id) match {
       case true => invoiceStorage.findByCustomerId(id).map ( _ match {
           case Some(result) => Left("customerId already exists")

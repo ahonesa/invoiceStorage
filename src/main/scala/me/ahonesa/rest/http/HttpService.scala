@@ -5,6 +5,7 @@ import akka.http.scaladsl.server.Directives._
 import me.ahonesa.rest.routes.customers.CustomersRoute
 import me.ahonesa.rest.routes.health.HealthRoute
 import me.ahonesa.rest.routes.invoices.InvoicesRoute
+import me.ahonesa.rest.routes.payments.PaymentsRoute
 import me.ahonesa.rest.services.CustomersService
 import me.ahonesa.rest.swagger.SwaggerService
 import me.ahonesa.rest.utils.CorsSupport
@@ -16,6 +17,7 @@ class HttpService(usersService: CustomersService)(implicit executionContext: Exe
 
   val customersRoute = CustomersRoute(usersService)
   val invoicesRoute = InvoicesRoute()
+  val paymentsRoute = PaymentsRoute()
   val healthRoute = HealthRoute()
 
   val routes =
@@ -23,6 +25,7 @@ class HttpService(usersService: CustomersService)(implicit executionContext: Exe
         SwaggerService(system).routes ~
         customersRoute.route ~
         invoicesRoute.route ~
+        paymentsRoute.route ~
         healthRoute.route
       }
 

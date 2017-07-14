@@ -21,9 +21,9 @@ abstract class InvoicesTable extends Table[InvoicesTable, Invoice] {
 
   override def tableName: String = "invoices"
 
-  object customerId extends StringColumn with PartitionKey
+  object invoiceId extends StringColumn with PartitionKey
 
-  object invoiceId extends StringColumn with PrimaryKey
+  object customerId extends StringColumn with PrimaryKey
 
   object invoiceDate extends DateColumn
 

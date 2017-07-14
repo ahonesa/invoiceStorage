@@ -4,7 +4,6 @@ import java.time.LocalDate
 import me.ahonesa.core.models.identifiers.{CustomerId, InvoiceId, PaymentId}
 import spray.json._
 
-
 case class NewInvoice(
   customerId: CustomerId,
   invoiceDate: LocalDate,
@@ -29,6 +28,13 @@ case class InvoiceSummary(
 
 case class InvoicePayment(
   paymentId: PaymentId,
+  invoiceId: InvoiceId,
+  paymentDate: LocalDate,
+  paymentAmount: BigDecimal
+)
+
+case class NewPayment(
+  invoiceId: InvoiceId,
   paymentDate: LocalDate,
   paymentAmount: BigDecimal
 )

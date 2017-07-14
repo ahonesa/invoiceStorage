@@ -1,16 +1,11 @@
 package me.ahonesa.storage
 
-import java.util.concurrent.TimeUnit
-
 import com.outworkers.phantom.connectors.{CassandraConnection, ContactPoints, KeySpace}
 import com.outworkers.phantom.database.Database
-import me.ahonesa.Main
 import me.ahonesa.core.models.{Customer, NewCustomer}
 import me.ahonesa.rest.utils.{Config, Logging}
 import me.ahonesa.storage.db.{CustomerTable, InvoicesTable}
-
 import scala.concurrent.{Await, ExecutionContext, Future}
-import scala.concurrent.duration.Duration
 import scala.concurrent.duration._
 import com.outworkers.phantom.dsl._
 import me.ahonesa.core.models.identifiers.CustomerId

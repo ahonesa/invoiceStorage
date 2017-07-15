@@ -1,20 +1,23 @@
 package me.ahonesa.core.models
 
 import java.time.LocalDate
+import java.time.chrono.ChronoLocalDate
+import java.util.Date
+
 import me.ahonesa.core.models.identifiers.{CustomerId, InvoiceId, PaymentId}
 import spray.json._
 
 case class NewInvoice(
   customerId: CustomerId,
-  invoiceDate: LocalDate,
+  invoiceDate: Date,
   invoiceSummary: InvoiceSummary,
   invoiceStatus: InvoiceStatus
 )
 
 case class Invoice(
-  customerId: CustomerId,
   invoiceId: InvoiceId,
-  invoiceDate: LocalDate,
+  customerId: CustomerId,
+  invoiceDate: Date,
   invoiceSummary: InvoiceSummary,
   invoiceStatus: InvoiceStatus,
   invoicePayments: Set[InvoicePayment]
@@ -29,12 +32,12 @@ case class InvoiceSummary(
 case class InvoicePayment(
   paymentId: PaymentId,
   invoiceId: InvoiceId,
-  paymentDate: LocalDate,
+  paymentDate: Date,
   paymentAmount: BigDecimal
 )
 
 case class NewPayment(
-  paymentDate: LocalDate,
+  paymentDate: Date,
   paymentAmount: BigDecimal
 )
 

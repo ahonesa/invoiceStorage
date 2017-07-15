@@ -1,14 +1,14 @@
 package me.ahonesa.storage
 
-import com.outworkers.phantom.connectors.{CassandraConnection, ContactPoints, KeySpace}
+import com.outworkers.phantom.connectors.{CassandraConnection, ContactPoints}
 import com.outworkers.phantom.database.Database
-import me.ahonesa.core.models.{Customer, CustomerDetails}
+import me.ahonesa.core.models._
 import me.ahonesa.rest.utils.{Config, Logging}
 import me.ahonesa.storage.db.{CustomerTable, InvoicesTable}
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
 import com.outworkers.phantom.dsl._
-import me.ahonesa.core.models.identifiers.CustomerId
+import me.ahonesa.core.models.identifiers._
 
 import scala.util.{Failure, Success, Try}
 
@@ -54,6 +54,13 @@ class InvoiceStorage(override val connector: CassandraConnection)(executionConte
     val customer = Customer(id, customerDetails)
     CustomerTable.store(customer).future().map( resultSet =>
       if(resultSet.wasApplied()) Some(customer) else None
+    )
+  }
+
+  def createInvoice(id: InvoiceId, newInvoice: NewInvoice): Future[Option[Invoice]] = {
+    val invoice = Invoice(id, newInvoice.customerId, newInvoice.invoiceDate, newInvoice.invoiceSummary, newInvoice.invoiceStatus, Set())
+    InvoicesTable.store(invoice).future().map( resultSet =>
+      if(resultSet.wasApplied()) Some(invoice) else None
     )
   }
 }

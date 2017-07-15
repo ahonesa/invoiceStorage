@@ -1,7 +1,8 @@
 package me.ahonesa.rest.utils
 
+import java.text.SimpleDateFormat
 import java.time.LocalDate
-import java.util.UUID
+import java.util.{Date, UUID}
 
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport
 import me.ahonesa.core.models._
@@ -19,11 +20,11 @@ trait CommonJsonFormats extends DefaultJsonProtocol with SprayJsonSupport {
     override def write(uuid: UUID): JsValue = JsString(uuid.toString)
   }
 
-  implicit object localDateFormat extends JsonFormat[LocalDate] {
-    def write(obj: LocalDate): JsValue = JsString(obj.toString)
-    def read(json: JsValue): LocalDate = json match {
-      case JsString(v) => LocalDate.parse(v)
-      case _           => deserializationError("LocalDate deserializationError")
+  implicit object dateFormat extends JsonFormat[Date] {
+    def write(obj: Date): JsValue = JsString(obj.toString)
+    def read(json: JsValue): Date = json match {
+      case JsString(v) => new SimpleDateFormat("yyyy-MM-dd").parse(v)
+      case _           => deserializationError("Date deserializationError")
     }
   }
 

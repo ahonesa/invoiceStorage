@@ -2,7 +2,7 @@ package me.ahonesa.storage
 
 import com.outworkers.phantom.connectors.{CassandraConnection, ContactPoints, KeySpace}
 import com.outworkers.phantom.database.Database
-import me.ahonesa.core.models.{Customer, NewCustomer}
+import me.ahonesa.core.models.{Customer, CustomerDetails}
 import me.ahonesa.rest.utils.{Config, Logging}
 import me.ahonesa.storage.db.{CustomerTable, InvoicesTable}
 import scala.concurrent.{Await, ExecutionContext, Future}
@@ -17,7 +17,8 @@ object StorageConnector extends Config with Logging {
       .withClusterBuilder(_.withCredentials(username, password))
       .keySpace(keyspaceName)
 
-  implicit val session = Try(connector.session) match {
+  // Test connection
+  Try(connector.session) match {
     case Success(session) =>
       logger.info("Connected to Cassandra")
       session
@@ -29,13 +30,10 @@ object StorageConnector extends Config with Logging {
 }
 
 class InvoiceStorage(override val connector: CassandraConnection)(executionContext: ExecutionContext)
-
-  extends Database[InvoiceStorage](connector) with Config with Logging {
+  extends Database[InvoiceStorage](connector) with Config with Logging with RootConnector {
 
   object CustomerTable extends CustomerTable with connector.Connector
   object InvoicesTable extends InvoicesTable with connector.Connector
-
-  implicit val keySpace = KeySpace(keyspaceName)
 
   Try{
     Await.ready(CustomerTable.create.ifNotExists().future(), 10.seconds)
@@ -52,9 +50,9 @@ class InvoiceStorage(override val connector: CassandraConnection)(executionConte
     CustomerTable.findByCustomerId(id)
   }
 
-  def createCustomer(id: CustomerId, newCustomer: NewCustomer): Future[Option[Customer]] = {
-    val customer = Customer(id, newCustomer.name.getOrElse(""))
-    CustomerTable.createCustomer(customer.id, customer.name).map( resultSet =>
+  def createCustomer(id: CustomerId, customerDetails: CustomerDetails): Future[Option[Customer]] = {
+    val customer = Customer(id, customerDetails)
+    CustomerTable.store(customer).future().map( resultSet =>
       if(resultSet.wasApplied()) Some(customer) else None
     )
   }

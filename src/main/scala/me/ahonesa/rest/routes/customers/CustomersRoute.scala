@@ -2,7 +2,7 @@ package me.ahonesa.rest.routes.customers
 
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.server.Directives._
-import me.ahonesa.core.models.{Customer, NewCustomer}
+import me.ahonesa.core.models.{Customer, CustomerDetails}
 import me.ahonesa.rest.services.CustomersService
 import me.ahonesa.rest.utils.CommonJsonFormats
 import io.swagger.annotations._
@@ -55,7 +55,7 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
   ))
   def putCustomer =
     pathPrefix(Segment) { segm =>
-      entity(as[NewCustomer]) { newCustomer =>
+      entity(as[CustomerDetails]) { newCustomer =>
         complete {
           customersService.createCustomer(segm, newCustomer).map[ToResponseMarshallable] {
             case result => result.statusCode -> result.payload
@@ -65,10 +65,21 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
     }
 }
 
+
 @ApiModel(description = "A Customer object")
 case class NewCustomerSwaggerModel(
- @(ApiModelProperty @field)(value = "name of the customer", required = false)
- name: Option[String] = None,
- @(ApiModelProperty @field)(value = "email of the customer", required = false)
- email: Option[String] = None
+  @(ApiModelProperty @field)(value = "customerNumber", required = false)
+  customerNumber: Option[String] = None,
+  @(ApiModelProperty @field)(value = "firstName", required = false)
+  firstName: Option[String] = None,
+  @(ApiModelProperty @field)(value = "lastName", required = false)
+  lastName: Option[String] = None,
+  @(ApiModelProperty @field)(value = "emailAddress", required = false)
+  emailAddress: Option[String] = None,
+  @(ApiModelProperty @field)(value = "phone", required = false)
+  phone: Option[String] = None,
+  @(ApiModelProperty @field)(value = "billingAddress1", required = false)
+  billingAddress1: Option[String] = None,
+  @(ApiModelProperty @field)(value = "billingAddress2", required = false)
+  billingAddress2: Option[String] = None
 )

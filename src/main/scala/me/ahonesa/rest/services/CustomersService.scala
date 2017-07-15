@@ -1,7 +1,7 @@
 package me.ahonesa.rest.services
 
 import me.ahonesa.core.models.identifiers.CustomerId
-import me.ahonesa.core.models.{Customer, NewCustomer, Response, ResponseStatusCodes}
+import me.ahonesa.core.models._
 import me.ahonesa.rest.utils.CommonJsonFormats
 import me.ahonesa.storage.InvoiceStorage
 import spray.json._
@@ -20,10 +20,10 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
     )
   }
 
-  def createCustomer(id: CustomerId, newCustomer: NewCustomer): Future[Response] = {
+  def createCustomer(id: CustomerId, customerDetails: CustomerDetails): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
         left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
-        right => invoiceStorage.createCustomer(id, newCustomer) ).map {
+        right => invoiceStorage.createCustomer(id, customerDetails) ).map {
           case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson )
           case None => Response( ResponseStatusCodes.dbError, JsNull )
         }

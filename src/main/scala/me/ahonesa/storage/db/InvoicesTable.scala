@@ -5,17 +5,7 @@ import com.outworkers.phantom.keys.PrimaryKey
 import me.ahonesa.core.models.{Invoice, InvoicePayment, InvoiceSummary}
 import me.ahonesa.rest.utils.CommonJsonFormats
 import spray.json._
-import Primitives.invoiceSummaryPrimitive
-import Primitives.invoicePaymentPrimitive
-
-object Primitives extends CommonJsonFormats {
-  implicit val invoiceSummaryPrimitive: Primitive[InvoiceSummary] = {
-    Primitive.json[InvoiceSummary](to => to.toJson.compactPrint)(jsonString => jsonString.parseJson.convertTo[InvoiceSummary])
-  }
-  implicit val invoicePaymentPrimitive: Primitive[InvoicePayment] = {
-    Primitive.json[InvoicePayment](to => to.toJson.compactPrint)(jsonString => jsonString.parseJson.convertTo[InvoicePayment])
-  }
-}
+import me.ahonesa.storage._
 
 abstract class InvoicesTable extends Table[InvoicesTable, Invoice] {
 

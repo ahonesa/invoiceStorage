@@ -16,10 +16,10 @@ libraryDependencies ++= {
     "com.typesafe.akka" %% "akka-http-spray-json" % akka,
     "com.outworkers"  %% "phantom-dsl" % phantom,
     "com.github.swagger-akka-http" %% "swagger-akka-http" % "0.9.1",
-    "org.slf4j" % "slf4j-api" % slf4j,
-    "org.slf4j" % "slf4j-simple" % slf4j,
-    "org.scalatest" %% "scalatest" % scalaTest % "test",
-    "com.typesafe.akka" %% "akka-http-testkit" % akka % "test"
+    "ch.qos.logback" % "logback-classic" % "1.2.3",
+    "com.typesafe.scala-logging" %% "scala-logging" % "3.7.1",
+    "org.scalatest" %% "scalatest" % scalaTest,
+    "com.typesafe.akka" %% "akka-http-testkit" % akka
   )
 }
 

@@ -3,16 +3,18 @@ package me.ahonesa.storage
 import com.outworkers.phantom.connectors.{CassandraConnection, ContactPoints}
 import com.outworkers.phantom.database.Database
 import me.ahonesa.core.models._
-import me.ahonesa.rest.utils.{Config, Logging}
+import me.ahonesa.rest.utils.{Config}
 import me.ahonesa.storage.db.{CustomerTable, InvoicesTable}
+
 import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration._
 import com.outworkers.phantom.dsl._
+import com.typesafe.scalalogging.LazyLogging
 import me.ahonesa.core.models.identifiers._
 
 import scala.util.{Failure, Success, Try}
 
-object StorageConnector extends Config with Logging {
+object StorageConnector extends Config with LazyLogging {
   lazy val connector: CassandraConnection = ContactPoints(hosts)
       .withClusterBuilder(_.withCredentials(username, password))
       .keySpace(keyspaceName)
@@ -30,7 +32,7 @@ object StorageConnector extends Config with Logging {
 }
 
 class InvoiceStorage(override val connector: CassandraConnection)(executionContext: ExecutionContext)
-  extends Database[InvoiceStorage](connector) with Config with Logging with RootConnector {
+  extends Database[InvoiceStorage](connector) with Config with LazyLogging with RootConnector {
 
   object CustomerTable extends CustomerTable with connector.Connector
   object InvoicesTable extends InvoicesTable with connector.Connector

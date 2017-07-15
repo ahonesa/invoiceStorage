@@ -21,10 +21,6 @@ case class HealthRoute(implicit executionContext: ExecutionContext) extends Comm
   }
 
   @ApiOperation(httpMethod = "GET", value = "Return Hello World")
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "Return Hello Greeting"),
-    new ApiResponse(code = 500, message = "Internal server error")
-  ))
   def getHealth =
       get {
         complete { 200 -> "Hello, world!".toJson }

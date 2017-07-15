@@ -2,7 +2,7 @@ package me.ahonesa.storage.db
 
 import me.ahonesa.core.models.{Invoice, InvoicePayment, InvoiceStatus, InvoiceSummary}
 import com.outworkers.phantom.dsl._
-import me.ahonesa.core.models.identifiers.InvoiceId
+import me.ahonesa.core.models.identifiers.{CustomerId, InvoiceId}
 import me.ahonesa.storage._
 
 import scala.concurrent.Future
@@ -43,5 +43,12 @@ abstract class InvoicesTable extends Table[InvoicesTable, Invoice] {
       .where(_.invoiceId eqs id)
       .one()
   }
+
+  def findByCustomerId(id: CustomerId): Future[List[Invoice]] = {
+    select
+      .where(_.customerId eqs id)
+      .fetch()
+  }
+
 }
 

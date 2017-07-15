@@ -54,6 +54,10 @@ class InvoiceStorage(override val connector: CassandraConnection)(executionConte
     InvoicesTable.findById(id)
   }
 
+  def findInvoicesByCustomerId(id: CustomerId): Future[List[Invoice]] = {
+    InvoicesTable.findByCustomerId(id)
+  }
+
   def createCustomer(id: CustomerId, customerDetails: CustomerDetails): Future[Option[Customer]] = {
     val customer = Customer(id, customerDetails)
     CustomerTable.store(customer).future().map( resultSet =>

@@ -1,6 +1,8 @@
 package me.ahonesa.core.models
 
-case class Customer(customerId: String, customerDetails: CustomerDetails)
+import me.ahonesa.core.models.identifiers.CustomerId
+
+case class Customer(customerId: CustomerId, customerDetails: CustomerDetails)
 
 case class CustomerDetails(
   customerNumber: Option[String] = None,
@@ -10,4 +12,9 @@ case class CustomerDetails(
   phone: Option[String] = None,
   billingAddress1: Option[String] = None,
   billingAddress2: Option[String] = None
+)
+
+case class AllCustomerData(
+  customer: Customer,
+  invoices: List[Invoice]
 )

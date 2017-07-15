@@ -13,7 +13,7 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
   def getCustomerById(id: CustomerId): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
         left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
-        right => invoiceStorage.findByCustomerId(id) ).map {
+        right => invoiceStorage.findCustomerById(id) ).map {
           case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson )
           case None => Response( ResponseStatusCodes.dbError, JsNull )
         }
@@ -37,7 +37,7 @@ trait CustomerValidator extends CommonValidator {
 
   def validateCustomerId(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage): Future[Either[String, String]] = {
     containsNoSpecialChars(id) match {
-      case true => invoiceStorage.findByCustomerId(id).map ( _ match {
+      case true => invoiceStorage.findCustomerById(id).map ( _ match {
           case Some(result) => Left("customerId already exists")
           case None => Right("ok")
         }

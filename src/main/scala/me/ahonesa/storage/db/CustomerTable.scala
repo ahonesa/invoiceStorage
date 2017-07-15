@@ -15,9 +15,9 @@ abstract class CustomerTable extends Table[CustomerTable, Customer] {
 
   object customerDetails extends JsonColumn[CustomerDetails]
 
-  def findByCustomerId(customerId: CustomerId): Future[Option[Customer]] = {
+  def findById(id: CustomerId): Future[Option[Customer]] = {
     select
-      .where(_.customerId eqs customerId)
+      .where(_.customerId eqs id)
       .one()
   }
 }

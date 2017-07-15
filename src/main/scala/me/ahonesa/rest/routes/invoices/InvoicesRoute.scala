@@ -10,12 +10,13 @@ import io.swagger.annotations._
 import javax.ws.rs.Path
 import akka.http.scaladsl.server.Directives
 import me.ahonesa.core.models.identifiers.CustomerId
+import me.ahonesa.rest.services.InvoicesService
 import scala.annotation.meta.field
 import scala.concurrent.ExecutionContext
 
 @Path("/invoices")
 @Api(value = "/invoices")
-case class InvoicesRoute()(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
+case class InvoicesRoute(invoicesService: InvoicesService)(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
 
   val invoicesPath = "invoices"
 
@@ -39,10 +40,9 @@ case class InvoicesRoute()(implicit executionContext: ExecutionContext) extends 
     pathPrefix(Segment) { segm =>
       entity(as[NewInvoice]) { newInvoice =>
         complete {
-    //      invoicesService.createInvoice(segm, newInvoice).map[ToResponseMarshallable] {
-    //        case result => result.statusCode -> result.payload
-    //      }
-          200 -> ""  // TODO: fix
+          invoicesService.createInvoice(segm, newInvoice).map[ToResponseMarshallable] {
+            case result => result.statusCode -> result.payload
+          }
         }
       }
     }

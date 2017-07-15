@@ -5,7 +5,7 @@ import akka.event.{Logging, LoggingAdapter}
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
 import me.ahonesa.rest.http.HttpService
-import me.ahonesa.rest.services.CustomersService
+import me.ahonesa.rest.services.{CustomersService, InvoicesService}
 import me.ahonesa.rest.utils.Config
 import me.ahonesa.storage.{InvoiceStorage, StorageConnector}
 
@@ -20,9 +20,10 @@ object Main extends App with Config {
 
   implicit val invoiceStorage = new InvoiceStorage(StorageConnector.connector)(executor)
 
-  val usersService = new CustomersService()
+  val customersService = new CustomersService()
+  val invoicesService = new InvoicesService()
 
-  val httpService = new HttpService(usersService)
+  val httpService = new HttpService(customersService, invoicesService)
 
   Http().bindAndHandle(httpService.routes, httpHost, httpPort)
 

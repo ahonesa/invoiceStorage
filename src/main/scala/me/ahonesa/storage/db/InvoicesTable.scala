@@ -1,9 +1,8 @@
 package me.ahonesa.storage.db
 
-import java.time.chrono.ChronoLocalDate
-
 import me.ahonesa.core.models.{Invoice, InvoicePayment, InvoiceSummary}
 import com.outworkers.phantom.dsl._
+import me.ahonesa.core.models.identifiers.InvoiceId
 import me.ahonesa.storage._
 
 import scala.concurrent.Future
@@ -26,6 +25,12 @@ abstract class InvoicesTable extends Table[InvoicesTable, Invoice]{
           .value(_.invoiceSummary, invoice.invoiceSummary)
           .value(_.invoiceStatus, invoice.invoiceStatus.toString)
           .value(_.invoicePayments, invoice.invoicePayments)
+  }
+
+  def findById(id: InvoiceId): Future[Option[Invoice]] = {
+    select
+      .where(_.invoiceId eqs id)
+      .one()
   }
 }
 

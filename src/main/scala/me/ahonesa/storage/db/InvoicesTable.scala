@@ -23,7 +23,7 @@ abstract class InvoicesTable extends Table[InvoicesTable, Invoice] {
 
   object invoiceId extends StringColumn with PartitionKey
 
-  object customerId extends StringColumn with PrimaryKey
+  object customerId extends StringColumn with Index
 
   object invoiceDate extends DateColumn
 

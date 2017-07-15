@@ -34,10 +34,6 @@ case class PaymentsRoute(invoicesService: InvoicesService)(implicit executionCon
     new ApiImplicitParam(name = "body", value = "Payment object to be created",
       dataType = "me.ahonesa.rest.routes.payments.NewPaymentSwaggerModel", required = true, paramType = "body")
   ))
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "Return Payment"),
-    new ApiResponse(code = 500, message = "Internal server error")
-  ))
   def putPayment = pathPrefix("for" / Segment) { invoiceId =>
     entity(as[InvoicePayment]) { newPayment =>
       complete {

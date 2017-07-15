@@ -28,10 +28,6 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "customerId", required = true, dataType = "string", paramType = "path", value = "Id of customer to be fetched")
   ))
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "Return customer", response = classOf[Customer]),
-    new ApiResponse(code = 500, message = "Internal server error")
-  ))
   def getCustomer =
       pathPrefix(Segment) { segm =>
         complete {
@@ -48,10 +44,6 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
       value = "Id of customer to be created"),
     new ApiImplicitParam(name = "body", value = "Customer object to be created",
       dataType = "me.ahonesa.rest.routes.customers.NewCustomerSwaggerModel", required = true, paramType = "body")
-  ))
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "Return customer"),
-    new ApiResponse(code = 500, message = "Internal server error")
   ))
   def putCustomer =
     pathPrefix(Segment) { segm =>

@@ -32,10 +32,6 @@ case class InvoicesRoute(invoicesService: InvoicesService)(implicit executionCon
     new ApiImplicitParam(name = "body", value = "Invoice object to be created",
       dataType = "me.ahonesa.rest.routes.invoices.NewInvoiceSwaggerModel", required = true, paramType = "body")
   ))
-  @ApiResponses(Array(
-    new ApiResponse(code = 200, message = "Return Invoice"),
-    new ApiResponse(code = 500, message = "Internal server error")
-  ))
   def putInvoice =
     pathPrefix(Segment) { segm =>
       entity(as[NewInvoice]) { newInvoice =>

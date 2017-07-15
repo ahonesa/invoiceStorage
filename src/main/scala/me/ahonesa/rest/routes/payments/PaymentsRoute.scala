@@ -23,11 +23,13 @@ case class PaymentsRoute()(implicit executionContext: ExecutionContext) extends 
     put { putPayment }
   }
 
-  @Path("/{paymentId}")
+  @Path("/{paymentId}/for/{invoiceId}")
   @ApiOperation(httpMethod = "PUT", value = "create payment for invoice", consumes = "application/json")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "paymentId", required = true, dataType = "string", paramType = "path",
       value = "Id of payment to be created"),
+    new ApiImplicitParam(name = "invoiceId", required = true, dataType = "string", paramType = "path",
+      value = "Id of invoice for the payment"),
     new ApiImplicitParam(name = "body", value = "Payment object to be created",
       dataType = "me.ahonesa.rest.routes.payments.NewPaymentSwaggerModel", required = true, paramType = "body")
   ))
@@ -36,13 +38,17 @@ case class PaymentsRoute()(implicit executionContext: ExecutionContext) extends 
     new ApiResponse(code = 500, message = "Internal server error")
   ))
   def putPayment =
-    pathPrefix(Segment) { segm =>
-      entity(as[NewPayment]) { newPayment =>
-        complete {
-    //      invoicesService.createInvoice(segm, newInvoice).map[ToResponseMarshallable] {
-    //        case result => result.statusCode -> result.payload
-    //      }
-          200 -> ""  // TODO: fix
+    pathPrefix(Segment) { paymentId =>
+      pathPrefix("for") {
+        pathPrefix(Segment) { invoiceId =>
+          entity(as[NewPayment]) { newPayment =>
+            complete {
+              //      invoicesService.createInvoice(segm, newInvoice).map[ToResponseMarshallable] {
+              //        case result => result.statusCode -> result.payload
+              //      }
+              200 -> "" // TODO: fix
+            }
+          }
         }
       }
     }
@@ -50,8 +56,6 @@ case class PaymentsRoute()(implicit executionContext: ExecutionContext) extends 
 
 @ApiModel(value = "NewPayment")
 case class NewPaymentSwaggerModel(
-  @(ApiModelProperty @field)(value = "id of the invoice", required = true)
-  invoiceId: InvoiceId,
   @(ApiModelProperty @field)(value = "payment date", required = true)
   paymentDate: LocalDate,
   @(ApiModelProperty @field)(value = "payment amount", required = true)

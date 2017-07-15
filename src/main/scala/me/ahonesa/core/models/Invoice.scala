@@ -34,7 +34,6 @@ case class InvoicePayment(
 )
 
 case class NewPayment(
-  invoiceId: InvoiceId,
   paymentDate: LocalDate,
   paymentAmount: BigDecimal
 )

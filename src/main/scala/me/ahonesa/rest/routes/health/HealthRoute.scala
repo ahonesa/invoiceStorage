@@ -27,7 +27,7 @@ case class HealthRoute(implicit executionContext: ExecutionContext) extends Comm
   ))
   def getHealth =
       get {
-        complete { 200 -> "Hello, world".toJson }
+        complete { 200 -> "Hello, world!".toJson }
       }
 
 }

@@ -17,7 +17,7 @@ class HttpService(usersService: CustomersService, invoicesService: InvoicesServi
 
   val customersRoute = CustomersRoute(usersService)
   val invoicesRoute = InvoicesRoute(invoicesService)
-  val paymentsRoute = PaymentsRoute()
+  val paymentsRoute = PaymentsRoute(invoicesService)
   val healthRoute = HealthRoute()
 
   val routes =

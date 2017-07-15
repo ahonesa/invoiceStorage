@@ -1,13 +1,13 @@
 package me.ahonesa.storage.db
 
-import me.ahonesa.core.models.{Invoice, InvoicePayment, InvoiceSummary}
+import me.ahonesa.core.models.{Invoice, InvoicePayment, InvoiceStatus, InvoiceSummary}
 import com.outworkers.phantom.dsl._
 import me.ahonesa.core.models.identifiers.InvoiceId
 import me.ahonesa.storage._
 
 import scala.concurrent.Future
 
-abstract class InvoicesTable extends Table[InvoicesTable, Invoice]{
+abstract class InvoicesTable extends Table[InvoicesTable, Invoice] {
 
   override def tableName: String = "invoices"
 
@@ -17,6 +17,17 @@ abstract class InvoicesTable extends Table[InvoicesTable, Invoice]{
   object invoiceSummary extends JsonColumn[InvoiceSummary]
   object invoiceStatus extends StringColumn
   object invoicePayments extends JsonSetColumn[InvoicePayment]
+
+  override def fromRow(r: Row): Invoice = {
+    Invoice(
+      invoiceId(r),
+      customerId(r),
+      invoiceDate(r),
+      invoiceSummary(r),
+      InvoiceStatus.fromString(invoiceStatus(r)),
+      invoicePayments(r)
+    )
+  }
 
   def store(invoice: Invoice) = {
     insert.value(_.invoiceId, invoice.invoiceId)

@@ -67,6 +67,12 @@ class InvoiceStorage(override val connector: CassandraConnection)(executionConte
       if(resultSet.wasApplied()) Some(invoice) else None
     )
   }
+
+  def updateInvoice(invoice: Invoice): Future[Option[Invoice]] = {
+    InvoicesTable.store(invoice).future().map( resultSet =>
+      if(resultSet.wasApplied()) Some(invoice) else None
+    )
+  }
 }
 
 

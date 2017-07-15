@@ -39,8 +39,7 @@ trait CommonJsonFormats extends DefaultJsonProtocol with SprayJsonSupport {
   implicit val customerDetailsFormat = jsonFormat7(CustomerDetails.apply)
   implicit val userEntityFormat = jsonFormat2(Customer.apply)
   implicit val invoiceSummaryFormat = jsonFormat3(InvoiceSummary.apply)
-  implicit val invoicePaymentFormat = jsonFormat4(InvoicePayment.apply)
+  implicit val invoicePaymentFormat = jsonFormat3(InvoicePayment.apply)
   implicit val newInvoiceFormat = jsonFormat4(NewInvoice.apply)
-  implicit val newPaymentFormat = jsonFormat2(NewPayment.apply)
   implicit val invoiceFormat = jsonFormat6(Invoice.apply)
 }

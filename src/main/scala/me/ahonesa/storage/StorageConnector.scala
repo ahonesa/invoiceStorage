@@ -14,7 +14,7 @@ import me.ahonesa.core.models.identifiers._
 
 import scala.util.{Failure, Success, Try}
 
-object StorageConnector extends Config with LazyLogging {
+trait StorageConnector extends Config with LazyLogging {
   lazy val connector: CassandraConnection = ContactPoints(hosts)
       .withClusterBuilder(_.withCredentials(username, password))
       .keySpace(keyspaceName)
@@ -23,7 +23,7 @@ object StorageConnector extends Config with LazyLogging {
   Try(connector.session) match {
     case Success(session) =>
       logger.info("Connected to Cassandra")
-      session
+      session.close()
     case Failure(ex) => {
       logger.error("Couldn't connect to Cassandra", ex)
       sys.exit(1)
@@ -31,7 +31,7 @@ object StorageConnector extends Config with LazyLogging {
   }
 }
 
-class InvoiceStorage(override val connector: CassandraConnection)(executionContext: ExecutionContext)
+class InvoiceStorage(override val connector: CassandraConnection)(implicit executionContext: ExecutionContext)
   extends Database[InvoiceStorage](connector) with Config with LazyLogging with RootConnector {
 
   object CustomerTable extends CustomerTable with connector.Connector
@@ -80,5 +80,3 @@ class InvoiceStorage(override val connector: CassandraConnection)(executionConte
     )
   }
 }
-
-

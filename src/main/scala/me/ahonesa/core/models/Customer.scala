@@ -14,7 +14,7 @@ case class CustomerDetails(
   billingAddress2: Option[String] = None
 )
 
-case class AllCustomerData(
+case class CustomerWithInvoices(
   customer: Customer,
   invoices: List[Invoice]
 )

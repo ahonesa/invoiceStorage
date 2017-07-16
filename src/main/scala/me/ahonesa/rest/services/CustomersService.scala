@@ -15,7 +15,7 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
         left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
         right => invoiceStorage.findCustomerById(id) ).flatMap {
           case Some(res: Customer) => invoiceStorage.findInvoicesByCustomerId(id).map { invoices =>
-            Response(ResponseStatusCodes.OK, AllCustomerData(res, invoices).toJson)
+            Response(ResponseStatusCodes.OK, CustomerWithInvoices(res, invoices).toJson)
           }
           case None => Future(Response( ResponseStatusCodes.dbError, JsNull ))
         }

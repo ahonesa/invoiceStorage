@@ -11,14 +11,14 @@ import me.ahonesa.storage.{InvoiceStorage, StorageConnector}
 
 import scala.concurrent.ExecutionContext
 
-object Main extends App with Config {
+object Main extends App with Config with StorageConnector {
 
   implicit val actorSystem = ActorSystem()
   implicit val executor: ExecutionContext = actorSystem.dispatcher
   implicit val log: LoggingAdapter = Logging(actorSystem, getClass)
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  implicit val invoiceStorage = new InvoiceStorage(StorageConnector.connector)(executor)
+  implicit val invoiceStorage = new InvoiceStorage(connector)(executor)
 
   val customersService = new CustomersService()
   val invoicesService = new InvoicesService()

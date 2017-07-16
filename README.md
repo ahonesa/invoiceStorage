@@ -14,9 +14,16 @@ Uses Cassandra as storage, which is able to store large amouts of invoices and p
 * Cassandra
 * Swagger
 
-## Getting started
+## Prerequisites
 
 * Set Cassandra configuration in application.conf
-* Project does not have Swagger-UI libraries included, but e.g. http://petstore.swagger.io can be used with local swagger.json URL: http://localhost:12345/api-docs/swagger.json
-* sbt reStart
+* sbt
 
+##
+
+* Project does not have Swagger-UI libraries included, but e.g. http://petstore.swagger.io can be used with local swagger.json URL: http://localhost:12345/api-docs/swagger.json
+sbt reStart
+
+## Schema
+
+![Cassandra schema](https://github.com/ahonesa/invoiceStorage/blob/master/schema.jpeg)

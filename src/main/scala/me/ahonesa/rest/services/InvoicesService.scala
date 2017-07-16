@@ -30,7 +30,7 @@ case class InvoicesService(implicit executionContext: ExecutionContext, invoiceS
         case Some(res: Invoice) => Response( ResponseStatusCodes.OK, res.toJson )
         case None => Response( ResponseStatusCodes.dbError, JsNull )
       }
-      case None => Future(Response(ResponseStatusCodes.validationError, "invoiceId does not exist".toJson))
+      case None => Future(Response(ResponseStatusCodes.notFound, "invoiceId does not exist".toJson))
     })
   }
 

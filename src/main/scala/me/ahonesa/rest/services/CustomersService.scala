@@ -12,24 +12,25 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
 
   def getCustomerById(id: CustomerId): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
-        left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
-        right => invoiceStorage.findCustomerById(id) ).flatMap {
+        left => Future(Response(ResponseStatusCodes.notFound, left.toJson)),
+        right => invoiceStorage.findCustomerById(id).flatMap {
           case Some(res: Customer) => invoiceStorage.findInvoicesByCustomerId(id).map { invoices =>
             Response(ResponseStatusCodes.OK, CustomerWithInvoices(res, invoices).toJson)
           }
           case None => Future(Response( ResponseStatusCodes.dbError, JsNull ))
         }
+      )
     )
   }
 
   def createCustomer(id: CustomerId, customerDetails: CustomerDetails): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
         left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
-        right => invoiceStorage.createCustomer(id, customerDetails) ).map {
+        right => invoiceStorage.createCustomer(id, customerDetails).map {
           case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson )
           case None => Response( ResponseStatusCodes.dbError, JsNull )
         }
-
+      )
     )
   }
 }
@@ -41,7 +42,7 @@ trait CustomerValidator extends CommonValidator {
     containsNoSpecialChars(id) match {
       case true => invoiceStorage.findCustomerById(id).map ( _ match {
           case Some(result) => Right("OK")
-          case None => Left("customerId does not exists")
+          case None => Left("customerId does not exist")
         }
       )
       case false => Future(Left("customerId validation error"))

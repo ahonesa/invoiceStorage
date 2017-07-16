@@ -24,7 +24,7 @@ case class CustomersRoute(customersService: CustomersService)(implicit execution
   }
 
   @Path("/{customerId}")
-  @ApiOperation(httpMethod = "GET", value = "get customer")
+  @ApiOperation(httpMethod = "GET", value = "get customer with invoices")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "customerId", required = true, dataType = "string", paramType = "path", value = "Id of customer to be fetched")
   ))

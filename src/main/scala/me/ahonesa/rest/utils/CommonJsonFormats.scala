@@ -11,6 +11,10 @@ import spray.json.{DefaultJsonProtocol, JsString, JsValue, JsonFormat, deseriali
 
 trait CommonJsonFormats extends DefaultJsonProtocol with SprayJsonSupport {
 
+  import java.time.format.DateTimeFormatter
+
+  val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
+
   implicit object uuidFormat extends JsonFormat[UUID] {
     override def read(json: JsValue): UUID = json match {
       case JsString(v) => UUID.fromString(v)
@@ -20,10 +24,10 @@ trait CommonJsonFormats extends DefaultJsonProtocol with SprayJsonSupport {
     override def write(uuid: UUID): JsValue = JsString(uuid.toString)
   }
 
-  implicit object dateFormat extends JsonFormat[Date] {
-    def write(obj: Date): JsValue = JsString(obj.toString)
-    def read(json: JsValue): Date = json match {
-      case JsString(v) => new SimpleDateFormat("yyyy-MM-dd").parse(v)
+  implicit object dateFormat extends JsonFormat[LocalDate] {
+    def write(obj: LocalDate): JsValue = JsString(obj.toString)
+    def read(json: JsValue): LocalDate = json match {
+      case JsString(v) => LocalDate.parse(v, formatter)
       case _           => deserializationError("Date deserializationError")
     }
   }

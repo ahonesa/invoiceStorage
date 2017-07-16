@@ -22,7 +22,7 @@ abstract class InvoicesTable extends Table[InvoicesTable, Invoice] {
     Invoice(
       invoiceId(r),
       customerId(r),
-      invoiceDate(r),
+      new java.sql.Date(invoiceDate(r).getTime).toLocalDate,
       invoiceSummary(r),
       InvoiceStatus.fromString(invoiceStatus(r)),
       invoicePayments(r)
@@ -32,7 +32,7 @@ abstract class InvoicesTable extends Table[InvoicesTable, Invoice] {
   def store(invoice: Invoice) = {
     insert.value(_.invoiceId, invoice.invoiceId)
           .value(_.customerId, invoice.customerId)
-          .value(_.invoiceDate, invoice.invoiceDate)
+          .value(_.invoiceDate, java.sql.Date.valueOf(invoice.invoiceDate))
           .value(_.invoiceSummary, invoice.invoiceSummary)
           .value(_.invoiceStatus, invoice.invoiceStatus.toString)
           .value(_.invoicePayments, invoice.invoicePayments)

@@ -23,11 +23,11 @@ case class PaymentsRoute(invoicesService: InvoicesService)(implicit executionCon
   val paymentsPath = "payments"
 
   val route = pathPrefix(paymentsPath) {
-    put { putPayment }
+    post { putPayment }
   }
 
   @Path("/for/{invoiceId}")
-  @ApiOperation(httpMethod = "PUT", value = "create payment for invoice", consumes = "application/json")
+  @ApiOperation(httpMethod = "POST", value = "create payment for invoice", consumes = "application/json")
   @ApiImplicitParams(Array(
     new ApiImplicitParam(name = "invoiceId", required = true, dataType = "string", paramType = "path",
       value = "Id of invoice for the payment"),

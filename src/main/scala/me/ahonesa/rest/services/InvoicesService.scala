@@ -3,12 +3,12 @@ package me.ahonesa.rest.services
 import me.ahonesa.core.models.identifiers.{CustomerId, InvoiceId, PaymentId}
 import me.ahonesa.core.models._
 import me.ahonesa.rest.utils.CommonJsonFormats
-import me.ahonesa.storage.InvoiceStorage
+import me.ahonesa.storage.{InvoiceStorage, InvoiceStorageAccess}
 import spray.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class InvoicesService(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage) extends InvoicesValidator with CommonJsonFormats with CommonValidator {
+case class InvoicesService(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess) extends InvoicesValidator with CommonJsonFormats with CommonValidator {
 
   def createInvoice(id: InvoiceId, newInvoice: NewInvoice): Future[Response] = {
     validateInvoiceId(id).flatMap( _.fold(
@@ -49,7 +49,7 @@ case class InvoicesService(implicit executionContext: ExecutionContext, invoiceS
 }
 
 trait InvoicesValidator extends CommonValidator {
-  def validateInvoiceId(id: InvoiceId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage): Future[Either[String, String]] = {
+  def validateInvoiceId(id: InvoiceId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess): Future[Either[String, String]] = {
     containsNoSpecialChars(id) match {
       case true => invoiceStorage.findInvoiceById(id).map ( _ match {
         case Some(result) => Left("invoiceId already exists")
@@ -59,7 +59,7 @@ trait InvoicesValidator extends CommonValidator {
     }
   }
 
-  def validateCustomerIdExists(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage): Future[Either[String, String]] = {
+  def validateCustomerIdExists(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess): Future[Either[String, String]] = {
     containsNoSpecialChars(id) match {
       case true => invoiceStorage.findCustomerById(id).map ( _ match {
         case Some(result) => Right("ok")

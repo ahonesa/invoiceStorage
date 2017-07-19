@@ -3,12 +3,12 @@ package me.ahonesa.rest.services
 import me.ahonesa.core.models.identifiers.CustomerId
 import me.ahonesa.core.models._
 import me.ahonesa.rest.utils.CommonJsonFormats
-import me.ahonesa.storage.InvoiceStorage
+import me.ahonesa.storage.{InvoiceStorage, InvoiceStorageAccess}
 import spray.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class CustomersService(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage) extends CustomerValidator with CommonJsonFormats {
+case class CustomersService(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess) extends CustomerValidator with CommonJsonFormats {
 
   def getCustomerById(id: CustomerId): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
@@ -38,7 +38,7 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
 
 trait CustomerValidator extends CommonValidator {
 
-  def validateCustomerId(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorage): Future[Either[String, String]] = {
+  def validateCustomerId(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess): Future[Either[String, String]] = {
     containsNoSpecialChars(id) match {
       case true => invoiceStorage.findCustomerById(id).map ( _ match {
           case Some(result) => Right("OK")

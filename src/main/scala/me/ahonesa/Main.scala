@@ -7,7 +7,7 @@ import akka.stream.ActorMaterializer
 import me.ahonesa.rest.http.HttpService
 import me.ahonesa.rest.services.{CustomersService, InvoicesService}
 import me.ahonesa.rest.utils.Config
-import me.ahonesa.storage.{InvoiceStorage, StorageConnector}
+import me.ahonesa.storage.{InvoiceStorage, InvoiceStorageAccess, StorageConnector}
 import com.outworkers.phantom.dsl._
 
 import scala.concurrent.ExecutionContext
@@ -19,8 +19,9 @@ object Main extends App with Config with StorageConnector {
   implicit val log: LoggingAdapter = Logging(actorSystem, getClass)
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
-  implicit val invoiceStorage = new InvoiceStorage(connector)(executor)
+  val invoiceStorage = new InvoiceStorage(connector)(executor)
   invoiceStorage.create()
+  implicit val invoiceStorageAccess: InvoiceStorageAccess = invoiceStorage
 
   val customersService = new CustomersService()
   val invoicesService = new InvoicesService()

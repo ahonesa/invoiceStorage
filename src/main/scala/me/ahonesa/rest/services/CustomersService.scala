@@ -12,7 +12,7 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
 
   def getCustomerById(id: CustomerId): Future[Response] = {
     validateCustomerId(id).flatMap( _.fold(
-        left => Future(Response(ResponseStatusCodes.notFound, left.toJson)),
+        left => Future(left),
         right => invoiceStorage.findCustomerById(id).flatMap {
           case Some(res: Customer) => invoiceStorage.findInvoicesByCustomerId(id).map { invoices =>
             Response(ResponseStatusCodes.OK, CustomerWithInvoices(res, invoices).toJson)
@@ -24,8 +24,8 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
   }
 
   def createCustomer(id: CustomerId, customerDetails: CustomerDetails): Future[Response] = {
-    validateCustomerId(id).flatMap( _.fold(
-        left => Future(Response(ResponseStatusCodes.validationError, left.toJson)),
+    validateCustomerIdForCreate(id).flatMap( _.fold(
+        left => Future(left),
         right => invoiceStorage.createCustomer(id, customerDetails).map {
           case Some(res: Customer) => Response( ResponseStatusCodes.OK, res.toJson )
           case None => Response( ResponseStatusCodes.dbError, JsNull )
@@ -36,16 +36,27 @@ case class CustomersService(implicit executionContext: ExecutionContext, invoice
 }
 
 
-trait CustomerValidator extends CommonValidator {
+trait CustomerValidator extends CommonValidator with CommonJsonFormats {
 
-  def validateCustomerId(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess): Future[Either[String, String]] = {
+  def validateCustomerId(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess): Future[Either[Response, String]] = {
     containsNoSpecialChars(id) match {
       case true => invoiceStorage.findCustomerById(id).map ( _ match {
           case Some(result) => Right("OK")
-          case None => Left("customerId does not exist")
+          case None => Left(Response(ResponseStatusCodes.notFound, "customerId does not exist".toJson))
         }
       )
-      case false => Future(Left("customerId validation error"))
+      case false => Future(Left(Response(ResponseStatusCodes.validationError ,"customerId validation error".toJson)))
+    }
+  }
+
+  def validateCustomerIdForCreate(id: CustomerId)(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess): Future[Either[Response, String]] = {
+    containsNoSpecialChars(id) match {
+      case true => invoiceStorage.findCustomerById(id).map ( _ match {
+        case Some(result) => Left(Response(ResponseStatusCodes.validationError, "customerId already exists".toJson))
+        case None => Right("OK")
+      }
+      )
+      case false => Future(Left(Response(ResponseStatusCodes.validationError ,"customerId validation error".toJson)))
     }
   }
 

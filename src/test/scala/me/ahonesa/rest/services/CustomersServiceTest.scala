@@ -18,7 +18,8 @@ class CustomersServiceTest extends FunSuite with Matchers with MockFactory {
   trait TestData extends CommonJsonFormats {
     implicit val invoiceStorageMock = mock[InvoiceStorageAccess]
     val testCustomerId = "testCustomerId"
-    val testCustomer = Customer(testCustomerId, CustomerDetails(firstName = Some("Matti"), lastName = Some("Näsä")))
+    val testCustomerDetails = CustomerDetails(firstName = Some("Matti"), lastName = Some("Näsä"))
+    val testCustomer = Customer(testCustomerId, testCustomerDetails)
 
     val customerService = new CustomersService()
   }
@@ -72,8 +73,39 @@ class CustomersServiceTest extends FunSuite with Matchers with MockFactory {
     }
   }
 
-  test("testCreateCustomer") {
+  test("createCustomer successfully") {
+    new TestData {
+      (invoiceStorageMock.findCustomerById _).expects(testCustomerId).returning(Future(None))
+      (invoiceStorageMock.createCustomer _).expects(testCustomerId, testCustomerDetails).returning(Future(Some(testCustomer)))
+
+      val result = Await.result(customerService.createCustomer(testCustomerId, testCustomerDetails), 5 seconds)
+
+      result.statusCode shouldBe ResponseStatusCodes.OK
+      result.payload.convertTo[Customer] shouldBe testCustomer
+    }
 
   }
 
+  test("createCustomer when customerId already exists") {
+    new TestData {
+      (invoiceStorageMock.findCustomerById _).expects(testCustomerId).returning(Future(Some(testCustomer)))
+
+      val result = Await.result(customerService.createCustomer(testCustomerId, testCustomerDetails), 5 seconds)
+
+      result.statusCode shouldBe ResponseStatusCodes.validationError
+      result.payload.convertTo[String] shouldBe "customerId already exists"
+    }
+
+  }
+
+  test("createCustomer with db returning None") {
+    new TestData {
+      (invoiceStorageMock.findCustomerById _).expects(testCustomerId).returning(Future(None))
+      (invoiceStorageMock.createCustomer _).expects(testCustomerId, testCustomerDetails).returning(Future(None))
+
+      val result = Await.result(customerService.createCustomer(testCustomerId, testCustomerDetails), 5 seconds)
+
+      result.statusCode shouldBe ResponseStatusCodes.dbError
+    }
+  }
 }

@@ -20,8 +20,8 @@ class InvoicesServiceTest extends FunSuite with Matchers with MockFactory {
     val testCustomerId = "testCustomerId"
     val testCustomerDetails = CustomerDetails(firstName = Some("Matti"), lastName = Some("Näsä"))
     val testCustomer = Customer(testCustomerId, testCustomerDetails)
-    val testInvoiceSummary = InvoiceSummary( "222", 99.95, 45.00 )
-    val testNewInvoice = NewInvoice(testCustomerId, LocalDate.of(2017,1,1), testInvoiceSummary, PartiallyPaid )
+    val testInvoiceSummary = InvoiceSummary( "222", 99.95, 0.00 )
+    val testNewInvoice = NewInvoice(testCustomerId, LocalDate.of(2017,1,1), testInvoiceSummary, Open )
     val testInvoiceId = "testInvoiceId"
     val testInvoice = Invoice(testInvoiceId, testCustomerId, testNewInvoice.invoiceDate, testInvoiceSummary, testNewInvoice.invoiceStatus, Set())
 
@@ -38,6 +38,24 @@ class InvoicesServiceTest extends FunSuite with Matchers with MockFactory {
 
       result.statusCode shouldBe ResponseStatusCodes.OK
       result.payload.convertTo[Invoice] shouldBe testInvoice
+    }
+  }
+
+  test("createPaymentForInvoice successfully") {
+    new TestData {
+      val testPayment = InvoicePayment("pay",LocalDate.of(2017,2,1), 45.00)
+      val expectedInvoice = testInvoice.copy(
+        invoiceSummary = InvoiceSummary( "222", 99.95, 45.00 ),
+        invoicePayments = testInvoice.invoicePayments + testPayment,
+        invoiceStatus = PartiallyPaid )
+
+      (invoiceStorageMock.findInvoiceById _).expects(testInvoiceId).returning(Future(Some(testInvoice)))
+      (invoiceStorageMock.updateInvoice _).expects(expectedInvoice).returning(Future(Some(expectedInvoice)))
+
+      val result = Await.result(invoicesService.createPaymentForInvoice(testInvoiceId, testPayment), 5 seconds)
+
+      result.statusCode shouldBe ResponseStatusCodes.OK
+      result.payload.convertTo[Invoice] shouldBe expectedInvoice
     }
   }
 }

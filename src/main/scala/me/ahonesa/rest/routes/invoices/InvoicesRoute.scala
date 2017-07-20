@@ -50,18 +50,8 @@ case class NewInvoiceSwaggerModel(
   customerId: CustomerId,
   @(ApiModelProperty @field)(value = "invoice date", required = true)
   invoiceDate: LocalDate,
-  @(ApiModelProperty @field)(value = "invoice summary object", required = true)
-  invoiceSummary: InvoiceSummarySwaggerModel,
-  @(ApiModelProperty @field)(value = "Enumeration items: Open, Closed, PartiallyPaid", example = "Open", required = true )
-  invoiceStatus: String
-)
-
-@ApiModel(value = "InvoiceSummary")
-case class InvoiceSummarySwaggerModel(
   @(ApiModelProperty @field)(value = "invoice number", required = true)
   invoiceNumber: String,
-  @(ApiModelProperty @field)(value = "to be paid", required = true)
-  toBePaid: BigDecimal,
-  @(ApiModelProperty @field)(value = "already paid", required = true)
-  alreadyPaid: BigDecimal
+  @(ApiModelProperty @field)(value = "toBePaid", required = true )
+  toBePaid: BigDecimal
 )

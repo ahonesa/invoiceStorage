@@ -8,8 +8,8 @@ import me.ahonesa.core.models.identifiers.{CustomerId, InvoiceId, PaymentId}
 case class NewInvoice(
   customerId: CustomerId,
   invoiceDate: LocalDate,
-  invoiceSummary: InvoiceSummary,
-  invoiceStatus: InvoiceStatus
+  invoiceNumber: String,
+  toBePaid: BigDecimal
 )
 
 case class Invoice(

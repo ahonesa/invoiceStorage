@@ -44,7 +44,8 @@ class InvoiceStorage(override val connector: CassandraConnection)(implicit execu
   }
 
   override def createInvoice(id: InvoiceId, newInvoice: NewInvoice): Future[Option[Invoice]] = {
-    val invoice = Invoice(id, newInvoice.customerId, newInvoice.invoiceDate, newInvoice.invoiceSummary, newInvoice.invoiceStatus, Set())
+    val invoiceSummary = InvoiceSummary(newInvoice.invoiceNumber,newInvoice.toBePaid, 0.00)
+    val invoice = Invoice(id, newInvoice.customerId, newInvoice.invoiceDate, invoiceSummary, Open, Set())
     InvoicesTable.store(invoice).future().map( resultSet =>
       if(resultSet.wasApplied()) Some(invoice) else None
     )

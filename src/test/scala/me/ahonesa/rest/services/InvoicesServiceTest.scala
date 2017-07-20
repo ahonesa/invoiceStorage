@@ -21,9 +21,9 @@ class InvoicesServiceTest extends FunSuite with Matchers with MockFactory {
     val testCustomerDetails = CustomerDetails(firstName = Some("Matti"), lastName = Some("Näsä"))
     val testCustomer = Customer(testCustomerId, testCustomerDetails)
     val testInvoiceSummary = InvoiceSummary( "222", 99.95, 0.00 )
-    val testNewInvoice = NewInvoice(testCustomerId, LocalDate.of(2017,1,1), testInvoiceSummary, Open )
+    val testNewInvoice = NewInvoice(testCustomerId, LocalDate.of(2017,1,1), "222", 9.95 )
     val testInvoiceId = "testInvoiceId"
-    val testInvoice = Invoice(testInvoiceId, testCustomerId, testNewInvoice.invoiceDate, testInvoiceSummary, testNewInvoice.invoiceStatus, Set())
+    val testInvoice = Invoice(testInvoiceId, testCustomerId, testNewInvoice.invoiceDate, testInvoiceSummary, Open, Set())
 
     val invoicesService = new InvoicesService()
   }

@@ -10,13 +10,13 @@ import io.swagger.annotations._
 import javax.ws.rs.Path
 import akka.http.scaladsl.server.Directives
 import me.ahonesa.core.models.identifiers.CustomerId
-import me.ahonesa.rest.services.InvoicesService
+import me.ahonesa.rest.services.InvoiceService
 import scala.annotation.meta.field
 import scala.concurrent.ExecutionContext
 
 @Path("/invoices")
 @Api(value = "/invoices")
-case class InvoicesRoute(invoicesService: InvoicesService)(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
+case class InvoicesRoute(invoicesService: InvoiceService)(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
 
   val invoicesPath = "invoices"
 

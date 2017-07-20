@@ -3,7 +3,7 @@ package me.ahonesa.rest.routes.customers
 import akka.http.scaladsl.marshalling.ToResponseMarshallable
 import akka.http.scaladsl.server.Directives._
 import me.ahonesa.core.models.{Customer, CustomerDetails}
-import me.ahonesa.rest.services.CustomersService
+import me.ahonesa.rest.services.CustomerService
 import me.ahonesa.rest.utils.CommonJsonFormats
 import io.swagger.annotations._
 import javax.ws.rs.Path
@@ -15,7 +15,7 @@ import scala.concurrent.ExecutionContext
 
 @Path("/customers")
 @Api(value = "/customers")
-case class CustomersRoute(customersService: CustomersService)(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
+case class CustomersRoute(customersService: CustomerService)(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
 
   val customersPath = "customers"
 

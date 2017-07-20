@@ -8,7 +8,7 @@ import spray.json._
 
 import scala.concurrent.{ExecutionContext, Future}
 
-case class InvoicesService(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess) extends InvoicesValidator with CommonJsonFormats with CommonValidator {
+case class InvoiceService(implicit executionContext: ExecutionContext, invoiceStorage: InvoiceStorageAccess) extends InvoicesValidator with CommonJsonFormats with CommonValidator {
 
   def createInvoice(id: InvoiceId, newInvoice: NewInvoice): Future[Response] = {
     validateInvoiceId(id).flatMap( _.fold(

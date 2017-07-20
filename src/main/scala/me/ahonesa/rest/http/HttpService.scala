@@ -6,13 +6,13 @@ import me.ahonesa.rest.routes.customers.CustomersRoute
 import me.ahonesa.rest.routes.health.HealthRoute
 import me.ahonesa.rest.routes.invoices.InvoicesRoute
 import me.ahonesa.rest.routes.payments.PaymentsRoute
-import me.ahonesa.rest.services.{CustomersService, InvoicesService}
+import me.ahonesa.rest.services.{CustomerService, InvoiceService}
 import me.ahonesa.rest.swagger.SwaggerService
 import me.ahonesa.rest.utils.CorsSupport
 
 import scala.concurrent.ExecutionContext
 
-class HttpService(usersService: CustomersService, invoicesService: InvoicesService)(implicit executionContext: ExecutionContext, system: ActorSystem)
+class HttpService(usersService: CustomerService, invoicesService: InvoiceService)(implicit executionContext: ExecutionContext, system: ActorSystem)
   extends CorsSupport {
 
   val customersRoute = CustomersRoute(usersService)

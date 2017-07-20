@@ -13,7 +13,7 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import spray.json._
 
-class CustomersServiceTest extends FunSuite with Matchers with MockFactory {
+class CustomerServiceTest extends FunSuite with Matchers with MockFactory {
 
   trait TestData extends CommonJsonFormats {
     implicit val invoiceStorageMock = mock[InvoiceStorageAccess]
@@ -21,7 +21,7 @@ class CustomersServiceTest extends FunSuite with Matchers with MockFactory {
     val testCustomerDetails = CustomerDetails(firstName = Some("Matti"), lastName = Some("Näsä"))
     val testCustomer = Customer(testCustomerId, testCustomerDetails)
 
-    val customerService = new CustomersService()
+    val customerService = new CustomerService()
   }
 
   test("getCustomerById when customer exists with invoices") {

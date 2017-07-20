@@ -13,7 +13,7 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration._
 import spray.json._
 
-class InvoicesServiceTest extends FunSuite with Matchers with MockFactory {
+class InvoiceServiceTest extends FunSuite with Matchers with MockFactory {
 
   trait TestData extends CommonJsonFormats {
     implicit val invoiceStorageMock = mock[InvoiceStorageAccess]
@@ -25,7 +25,7 @@ class InvoicesServiceTest extends FunSuite with Matchers with MockFactory {
     val testInvoiceId = "testInvoiceId"
     val testInvoice = Invoice(testInvoiceId, testCustomerId, testNewInvoice.invoiceDate, testInvoiceSummary, Open, Set())
 
-    val invoicesService = new InvoicesService()
+    val invoicesService = new InvoiceService()
   }
 
   test("createInvoice successfully") {

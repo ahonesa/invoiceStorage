@@ -11,14 +11,14 @@ import javax.ws.rs.Path
 
 import akka.http.scaladsl.server.Directives
 import me.ahonesa.core.models.identifiers.{CustomerId, InvoiceId, PaymentId}
-import me.ahonesa.rest.services.InvoicesService
+import me.ahonesa.rest.services.InvoiceService
 
 import scala.annotation.meta.field
 import scala.concurrent.ExecutionContext
 
 @Path("/payments")
 @Api(value = "/payments")
-case class PaymentsRoute(invoicesService: InvoicesService)(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
+case class PaymentsRoute(invoicesService: InvoiceService)(implicit executionContext: ExecutionContext) extends Directives with CommonJsonFormats {
 
   val paymentsPath = "payments"
 
